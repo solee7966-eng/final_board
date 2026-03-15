@@ -26,26 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         // 1. 헤더에서 시도
-        String token = resolveToken(request.getHeader("Authorization"));
-
-        // 2. 쿠키에서 시도
-        if (token == null && request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("accessToken".equals(cookie.getName())) {
-                    token = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
-        // 3. 세션에서 시도
-        if (token == null && request.getSession(false) != null) {
-            Object sessionToken = request.getSession(false).getAttribute("accessToken");
-            if (sessionToken != null) {
-                token = sessionToken.toString();
-            }
-        }
-
+        String token = resolveToken(request.getHeader("Authorization"));      
+        
         // 4. accessToken 없거나 만료 시 refreshToken으로 재발급
         if (token == null || !jwtTokenProvider.validateToken(token)) {
             String refreshToken = null;
@@ -82,14 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         String newToken = (String) result.getBody().get("accessToken");
                         token = newToken;
 
-                        // 새 accessToken 쿠키 발급
-                        Cookie newJwtCookie = new Cookie("accessToken", newToken);
-                        newJwtCookie.setHttpOnly(true);
-                        newJwtCookie.setPath("/");
-                        newJwtCookie.setDomain("localhost");
-                        newJwtCookie.setMaxAge(60);
-                        response.addCookie(newJwtCookie);
-
+                     
                         System.out.println("===== 8002 accessToken 자동 재발급 성공");
                     }
                 } catch (Exception e) {

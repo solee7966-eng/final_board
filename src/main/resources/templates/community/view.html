@@ -397,7 +397,7 @@
     </div>
 </div>
 
-<script>
+<script th:inline="javascript">
     /* ── /auth/check API로 로그인 여부 확인 ── */
     // fetch('/auth/check') 전체 삭제하고 이걸로 교체
 document.addEventListener('DOMContentLoaded', function () {
@@ -405,8 +405,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var postFooter = document.querySelector('.post-footer');
     var commentCard = document.querySelector('.comment-card');
 
-    // ✅ Thymeleaf로 서버에서 직접 받기
-    var myId = "[[${memberId}]]";
+    // Thymeleaf로 서버에서 직접 받기
+    var myId = /*[[${memberId}]]*/ null;
     var isLoggedIn = myId !== null && myId !== '' && myId !== 'null';
 
     applyLoginState(isLoggedIn, isLoggedIn ? myId : null);
