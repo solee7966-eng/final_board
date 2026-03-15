@@ -31,11 +31,13 @@
                    p.view_count AS viewCount,
                    p.created_at AS createdAt,
                    p.fk_memberid AS memberId,
+                   m.community_company_name AS communityCompanyName,
                    (SELECT COUNT(*) FROM tbl_comment c
                     WHERE c.fk_post_id = p.post_id
                     AND c.status = 'ACTIVE') AS commentCount
             FROM tbl_post p
             JOIN tbl_board b ON p.fk_board_id = b.board_id
+            JOIN tbl_member m ON p.fk_memberid = m.memberid
             WHERE p.post_status = 'ACTIVE'
 			AND p.IS_HIDDEN = 0
             <if test="boardId != null">

@@ -240,8 +240,12 @@
                             </div>
                         </td>
 
-                        <td style="padding:14px 8px; text-align:center; font-size:13px; color:#666;"
-                            th:text="${post.memberId}"></td>
+                        <td style="padding:14px 8px; text-align:center;">
+						    <div style="font-size:13px; color:#666; font-weight:500;" 
+						         th:text="${post.memberId}"></div>
+						    <div style="font-size:11px; color:#aaa; margin-top:2px;"
+						         th:text="${post.communityCompanyName} ?: ''"  ></div>
+						</td>
 
                         <td style="padding:14px 8px; text-align:center; font-size:12px; color:#999;"
                             th:text="${#temporals.format(post.createdAt, 'MM-dd')}"></td>

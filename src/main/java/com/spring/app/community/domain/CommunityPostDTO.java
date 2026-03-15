@@ -8,27 +8,19 @@ import lombok.Data;
 public class CommunityPostDTO {
 
     private Long postId;
-
     private String title;
-
     private String memberId;
-
-    private Long boardId;
+    private String communityCompanyName;
+    private Long boardId;   
     
     private String boardTitle;
-
     private int viewCount;
-
     private int commentCount;
- 
+    
     private String content;
-
-    private String postStatus;
-
+    private String postStatus;   
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
-
     private int isHidden;
-
 }
