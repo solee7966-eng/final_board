@@ -412,6 +412,18 @@
 <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
 
+		const newTokenCookie = document.cookie.split(';')
+		        .find(c => c.trim().startsWith('newAccessToken='));
+		    if (newTokenCookie) {
+		        const newToken = newTokenCookie.trim().split('=')[1];
+		        if (window.JPAuth) {
+		            window.JPAuth.setAccessToken(newToken);
+		        } else {
+		            sessionStorage.setItem('accessToken', newToken);
+		        }
+		        document.cookie = 'newAccessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+		    }
+		
         var postFooter = document.querySelector('.post-footer');
         var commentCard = document.querySelector('.comment-card');
 

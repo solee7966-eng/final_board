@@ -2,11 +2,14 @@ package com.spring.app.security.jwt;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -15,10 +18,14 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RestTemplate restTemplate;
+
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider,
+                                   RestTemplate restTemplate) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -26,8 +33,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         // 1. 헤더에서 시도
-        String token = resolveToken(request.getHeader("Authorization"));      
-        
+        String token = resolveToken(request.getHeader("Authorization"));
+
         // 4. accessToken 없거나 만료 시 refreshToken으로 재발급
         if (token == null || !jwtTokenProvider.validateToken(token)) {
             String refreshToken = null;
@@ -42,9 +49,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (refreshToken != null) {
                 try {
-                    org.springframework.web.client.RestTemplate rt =
-                        new org.springframework.web.client.RestTemplate();
-
                     org.springframework.http.HttpHeaders headers =
                         new org.springframework.http.HttpHeaders();
                     headers.add("Cookie", "refreshToken=" + refreshToken);
@@ -53,8 +57,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new org.springframework.http.HttpEntity<>(headers);
 
                     org.springframework.http.ResponseEntity<java.util.Map> result =
-                        rt.exchange(
-                        		"http://user-service/auth/reissue",
+                        restTemplate.exchange(
+                            "http://user-service/auth/reissue",
                             org.springframework.http.HttpMethod.POST,
                             entity,
                             java.util.Map.class
@@ -63,20 +67,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     if (result.getStatusCode().is2xxSuccessful() && result.getBody() != null) {
                         String newToken = (String) result.getBody().get("accessToken");
                         token = newToken;
-                        
-                     //  추가
+
                         Cookie newTokenCookie = new Cookie("newAccessToken", newToken);
                         newTokenCookie.setPath("/");
                         newTokenCookie.setMaxAge(10);
                         response.addCookie(newTokenCookie);
 
                         System.out.println("===== 8002 accessToken 자동 재발급 성공");
-                        
-                        response.setHeader("Authorization", "Bearer " + newToken);
-                        response.setHeader("Access-Control-Expose-Headers", "Authorization"); 
 
-                     
-                        System.out.println("===== 8002 accessToken 자동 재발급 성공");
+                        response.setHeader("Authorization", "Bearer " + newToken);
+                        response.setHeader("Access-Control-Expose-Headers", "Authorization");
                     }
                 } catch (Exception e) {
                     System.out.println("===== 8002 토큰 재발급 실패: " + e.getMessage());
