@@ -72,12 +72,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     	                new org.springframework.http.HttpEntity<>(headers);
 
     	            org.springframework.http.ResponseEntity<java.util.Map> result =
-    	                restTemplate.exchange(
-    	                    "http://localhost:8001/auth/reissue", // ✅ 수정
-    	                    org.springframework.http.HttpMethod.POST,
-    	                    entity,
-    	                    java.util.Map.class
-    	                );
+    	            	restTemplate.exchange(
+    	            			"http://main-service:8001/auth/reissue",
+        	                    org.springframework.http.HttpMethod.POST,
+        	                    entity,
+        	                    java.util.Map.class
+    	            	);
 
     	            if (result.getStatusCode().is2xxSuccessful() && result.getBody() != null) {
     	                String newToken = (String) result.getBody().get("accessToken");
