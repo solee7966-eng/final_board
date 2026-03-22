@@ -32,7 +32,7 @@ public class CommunityController {
     
     public CommunityController(CommunityService communityService, CommentService commentService) {
         this.communityService = communityService;
-        this.commentService = commentService;
+        this.commentService = commentService; 
     }
 
     @GetMapping
