@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "tott1111/jobfinder-board-anth"
-        SERVER_IP = "3.37.62.135"
+        SERVER_IP = "52.78.3.125"
         APP_DIR = "/home/ubuntu/jobfinder"
     }
 
