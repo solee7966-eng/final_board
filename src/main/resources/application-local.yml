@@ -29,3 +29,9 @@ file:
   photoupload-dir: file_photoupload
   emailattachfile-dir: file_emailattachfile
   images-dir: file_images
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka

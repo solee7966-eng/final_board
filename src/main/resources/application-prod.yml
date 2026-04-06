@@ -24,3 +24,9 @@ file:
   photoupload-dir: /app/data/file_photoupload
   emailattachfile-dir: /app/data/file_emailattachfile
   images-dir: /app/data/file_images
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka/
