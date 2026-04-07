@@ -16,6 +16,9 @@ spring:
   application:
     name: board-service
 
+  profiles:
+    active: local
+
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
